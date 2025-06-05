@@ -2,10 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   TETROMINOES,
   BOARD_WIDTH,
-  BOARD_HEIGHT,
   Tetromino,
   getNextRotationIndex,
-  TETROMINO_COLORS,
   createEmptyBoard,
   getRandomTetromino,
   isValidPosition,

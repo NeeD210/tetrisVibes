@@ -11,9 +11,6 @@ interface GameBoardProps {
   tetrominoColors: Record<TetrominoType, string>;
 }
 
-const BOARD_WIDTH = 10;
-const BOARD_HEIGHT = 20;
-
 export default React.memo(function GameBoard({ board, activeTetromino, ghostTetromino, tetrominoColors }: GameBoardProps) {
   // Copy the board to overlay the active and ghost tetromino
   const displayBoard = board.map(row => [...row]);
