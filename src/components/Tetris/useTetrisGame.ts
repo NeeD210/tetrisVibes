@@ -117,7 +117,7 @@ export function useTetrisGame({ gameMode, sprintGoal, digGoal, settings }: UseTe
   }, [board, nextTetromino]);
 
   // Restart the game
-  const restartGame = useCallback((_isMenuReset = false) => {
+  const restartGame = useCallback(() => {
     if (gameMode === 'dig') {
       setBoard(createBoardWithGarbage(DIG_START_LINES));
     } else {
@@ -133,8 +133,6 @@ export function useTetrisGame({ gameMode, sprintGoal, digGoal, settings }: UseTe
     setNextTetromino(getRandomTetromino());
     setHeldTetromino(null);
     setHasHeldThisTurn(false);
-    // When isMenuReset is true, we could do a more thorough cleanup
-    // for now, it's the same as a regular restart.
   }, [gameMode]);
 
   useEffect(() => {
@@ -375,7 +373,7 @@ export function useTetrisGame({ gameMode, sprintGoal, digGoal, settings }: UseTe
         return { ...swap, x: Math.floor((BOARD_WIDTH - TETROMINOES[swap.type][0][0].length) / 2), y: 0, rotation: 0 };
       }
     });
-  }, [activeTetromino, heldTetromino, gameOver, paused, hasHeldThisTurn]);
+  }, [heldTetromino, gameOver, paused, hasHeldThisTurn]);
 
   const togglePause = useCallback(() => {
     setPaused(p => !p);
