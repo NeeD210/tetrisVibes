@@ -93,7 +93,7 @@ export default function TetrisPage() {
   };
 
   const handleBackToMenu = useCallback(() => {
-    restartGame(true); // Reset internal game state
+    restartGame(); // Reset internal game state
     setGameMode(null);
     setSelectingSprintLines(false);
     setSelectingDigLines(false);
