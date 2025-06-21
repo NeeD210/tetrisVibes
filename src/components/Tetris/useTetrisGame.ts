@@ -18,8 +18,8 @@ import {
 import { playSound, toggleMute as smToggleMute, getMutedState } from '../../soundManager';
 import { GameMode, Settings } from '../../types';
 
-const DAS_DELAY = 120; // ms, delay before auto-repeat starts
-const DAS_INTERVAL = 40; // ms, speed of auto-repeat
+// const DAS_DELAY = 120; // ms, delay before auto-repeat starts
+// const DAS_INTERVAL = 40; // ms, speed of auto-repeat
 const SPRINT_GOAL = 40; // Default sprint goal
 const DIG_GOAL = 10; // Default dig goal
 const DIG_START_LINES = 10; // Initial garbage lines for Dig mode
@@ -59,12 +59,6 @@ export function useTetrisGame({ gameMode, sprintGoal, digGoal, settings }: UseTe
   const dasTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dasIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const activeMoveName = useRef<string | null>(null);
-
-  const pauseGame = useCallback(() => {
-    if (gameMode && !gameOver) {
-      setPaused(true);
-    }
-  }, [gameMode, gameOver]);
 
   useEffect(() => {
     const handleBlur = () => {
@@ -123,7 +117,7 @@ export function useTetrisGame({ gameMode, sprintGoal, digGoal, settings }: UseTe
   }, [board, nextTetromino]);
 
   // Restart the game
-  const restartGame = useCallback((isMenuReset = false) => {
+  const restartGame = useCallback((_isMenuReset = false) => {
     if (gameMode === 'dig') {
       setBoard(createBoardWithGarbage(DIG_START_LINES));
     } else {
@@ -342,23 +336,29 @@ export function useTetrisGame({ gameMode, sprintGoal, digGoal, settings }: UseTe
   }, [activeTetromino, board, paused, dropTetromino, settings, stopMoving]);
 
   const hardDrop = useCallback(() => {
-    if (gameOver || paused || !activeTetromino) return;
-    const y = getHardDropY(board, activeTetromino);
-    const pieceToLock = { ...activeTetromino, y };
-    setActiveTetromino(null); // Clear active piece immediately
+    if (gameOver || paused) return;
 
-    const placed = placeTetromino(board, pieceToLock);
-    const { newBoard, linesCleared: linesClearedCount, garbageLinesCleared } = clearLines(placed);
-    if (linesClearedCount > 0) {
-      setBoard(newBoard);
-      handleLineClear(linesClearedCount, garbageLinesCleared);
-    } else if (gameMode === 'dig') {
-      addGarbageLineIfNeeded(newBoard);
-    } else {
-      setBoard(newBoard);
-    }
-    playSound('drop');
-  }, [board, gameOver, paused, activeTetromino, handleLineClear, gameMode, addGarbageLineIfNeeded]);
+    setActiveTetromino(activeTetromino => {
+      if (!activeTetromino) {
+        return null;
+      }
+      const y = getHardDropY(board, activeTetromino);
+      const pieceToLock = { ...activeTetromino, y };
+
+      const placed = placeTetromino(board, pieceToLock);
+      const { newBoard, linesCleared: linesClearedCount, garbageLinesCleared } = clearLines(placed);
+      if (linesClearedCount > 0) {
+        setBoard(newBoard);
+        handleLineClear(linesClearedCount, garbageLinesCleared);
+      } else if (gameMode === 'dig') {
+        addGarbageLineIfNeeded(newBoard);
+      } else {
+        setBoard(newBoard);
+      }
+      playSound('drop');
+      return null;
+    });
+  }, [board, gameOver, paused, handleLineClear, gameMode, addGarbageLineIfNeeded]);
 
   const hold = useCallback(() => {
     if (gameOver || paused || hasHeldThisTurn) return;

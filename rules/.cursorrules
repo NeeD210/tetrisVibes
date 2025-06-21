@@ -1,5 +1,8 @@
 # Project Rules
 
+## Prompt logic and structure
+- Don't use npm run dev
+
 ### UI Design
 - *** Design UI for a mobile first app**
 - This project uses shadcn as it's primary UI.
