@@ -5,6 +5,7 @@ export const BOARD_WIDTH = 10;
 export const BOARD_HEIGHT = 20;
 
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
+export type BlockType = TetrominoType | 'Garbage';
 
 export interface Tetromino {
   type: TetrominoType;
@@ -16,7 +17,7 @@ export interface Tetromino {
 // Cell types for board rendering and logic
 export type ActiveCell = { active: true; type: TetrominoType };
 export type GhostCell = { ghost: true; type: TetrominoType };
-export type BoardCell = TetrominoType | 0 | ActiveCell | GhostCell; // 0 = empty, ActiveCell = active, GhostCell = ghost, TetrominoType = locked
+export type BoardCell = BlockType | 0 | ActiveCell | GhostCell; // 0 = empty, ActiveCell = active, GhostCell = ghost, BlockType = locked
 
 // Tetromino shapes and their rotation states
 export const TETROMINOES: Record<TetrominoType, number[][][]> = {
@@ -133,7 +134,7 @@ export const TETROMINOES: Record<TetrominoType, number[][][]> = {
 };
 
 // Tetromino colors
-export const TETROMINO_COLORS: Record<TetrominoType, string> = {
+export const TETROMINO_COLORS: Record<BlockType, string> = {
   I: 'bg-cyan-400',
   O: 'bg-yellow-300',
   T: 'bg-purple-400',
@@ -141,6 +142,7 @@ export const TETROMINO_COLORS: Record<TetrominoType, string> = {
   Z: 'bg-red-400',
   J: 'bg-blue-500',
   L: 'bg-orange-400',
+  Garbage: 'bg-gray-500',
 };
 
 // Create an empty board
@@ -203,15 +205,22 @@ export function placeTetromino(board: BoardCell[][], tetromino: Tetromino): Boar
 }
 
 // Clear completed lines and return new board and number of lines cleared
-export function clearLines(board: BoardCell[][]): { newBoard: BoardCell[][]; linesCleared: number } {
-  // A full line is a row where every cell is a string (TetrominoType)
+export function clearLines(board: BoardCell[][]): {
+  newBoard: BoardCell[][];
+  linesCleared: number;
+  garbageLinesCleared: number;
+} {
   const isFullLine = (row: BoardCell[]) => row.every(cell => typeof cell === 'string');
+
+  const fullLines = board.filter(isFullLine);
+  const garbageLinesCleared = fullLines.filter(row => row.some(cell => cell === 'Garbage')).length;
+
   const filtered = board.filter(row => !isFullLine(row));
   const linesCleared = BOARD_HEIGHT - filtered.length;
   while (filtered.length < BOARD_HEIGHT) {
     filtered.unshift(Array(BOARD_WIDTH).fill(0));
   }
-  return { newBoard: filtered, linesCleared };
+  return { newBoard: filtered, linesCleared, garbageLinesCleared };
 }
 
 // Find the lowest valid Y for a tetromino (for hard drop)
@@ -236,9 +245,32 @@ export function getNextRotationIndex(tetromino: TetrominoType, currentRotation: 
 
 // Level calculation based on lines cleared
 export function getLevel(lines: number): number {
-  if (lines >= 40) return 5 + Math.floor((lines - 40) / 40);
-  if (lines >= 20) return 4;
-  if (lines >= 10) return 3;
-  if (lines >= 5) return 2;
-  return 1;
+  return Math.floor(lines / 10) + 1;
+}
+
+// Function to add a garbage line, returns new board and whether game is over
+export function addGarbageLine(board: BoardCell[][]): { newBoard: BoardCell[][]; gameOver: boolean } {
+  // Check for game over: if the top visible row has locked pieces, game is over
+  if (board[0].some(cell => typeof cell === 'string')) {
+    return { newBoard: board, gameOver: true };
+  }
+
+  const newBoard = board.slice(1); // Shift all rows up
+  const holePosition = Math.floor(Math.random() * BOARD_WIDTH);
+  const garbageLine: BoardCell[] = Array(BOARD_WIDTH)
+    .fill('Garbage')
+    .map((cell, i) => (i === holePosition ? 0 : cell));
+  newBoard.push(garbageLine); // Add garbage to bottom
+
+  return { newBoard, gameOver: false };
+}
+
+// Create a board with garbage lines
+export function createBoardWithGarbage(numLines: number): BoardCell[][] {
+  let board = createEmptyBoard();
+  for (let i = 0; i < numLines; i++) {
+    // We can ignore the gameOver check here since we're building from an empty board
+    board = addGarbageLine(board).newBoard;
+  }
+  return board;
 } 

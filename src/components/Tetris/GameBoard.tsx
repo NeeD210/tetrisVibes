@@ -1,14 +1,14 @@
 import React from 'react';
-import { TETROMINOES, TetrominoType, Tetromino } from './tetrisLogic';
+import { TETROMINOES, Tetromino, BlockType, TetrominoType } from './tetrisLogic';
 
 type ActiveCell = { active: true; type: TetrominoType };
 type GhostCell = { ghost: true; type: TetrominoType };
-type BoardCell = TetrominoType | 0 | ActiveCell | GhostCell;
+type BoardCell = BlockType | 0 | ActiveCell | GhostCell;
 interface GameBoardProps {
   board: BoardCell[][];
   activeTetromino: Tetromino | null;
   ghostTetromino?: Tetromino | null;
-  tetrominoColors: Record<TetrominoType, string>;
+  tetrominoColors: Record<BlockType, string>;
 }
 
 export default React.memo(function GameBoard({ board, activeTetromino, ghostTetromino, tetrominoColors }: GameBoardProps) {
@@ -73,7 +73,7 @@ export default React.memo(function GameBoard({ board, activeTetromino, ghostTetr
               colorClass = tetrominoColors[cell.type] || 'bg-white';
               extraClass = 'opacity-30';
             } else if (typeof cell === 'string') {
-              colorClass = tetrominoColors[cell as TetrominoType] || 'bg-white';
+              colorClass = tetrominoColors[cell as BlockType] || 'bg-white';
             }
             return (
               <div

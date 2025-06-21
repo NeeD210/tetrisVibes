@@ -25,9 +25,8 @@ This document outlines the high-level plan to develop a classical and minimalist
 - [x] Manage game state (start, running, paused, game over)
 
 ## Phase 4: Polish & Enhancements
-- [ ] Add sound effects for line clears, drops, and game over
-- [ ] Add simple animations for line clears and piece drops
-- [ ] Responsive design for desktop and mobile
+- [x] Add sound effects for line clears, drops, and game over
+- [x] Responsive design for desktop
 - [x] Add a restart button and basic menu
 - [ ] Optimize performance and code structure
 

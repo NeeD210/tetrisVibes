@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background-color: #111827; /* bg-gray-900 */
+  --text-color: #ffffff;
+  --board-bg-color: #1f2937; /* bg-gray-800 */
+  --board-border-color: #4b5563; /* bg-gray-600 */
+  --cell-border-color: #374151; /* bg-gray-700 */
+  --button-bg-color: #4f46e5; /* bg-indigo-600 */
+  --button-hover-bg-color: #4338ca; /* bg-indigo-700 */
+  --text-muted-color: #9ca3af; /* text-gray-400 */
+}
+
+.theme-light {
+  --background-color: #f3f4f6; /* bg-gray-100 */
+  --text-color: #111827; /* text-gray-900 */
+  --board-bg-color: #e5e7eb; /* bg-gray-200 */
+  --board-border-color: #9ca3af; /* bg-gray-400 */
+  --cell-border-color: #d1d5db; /* bg-gray-300 */
+  --button-bg-color: #6366f1; /* bg-indigo-500 */
+  --button-hover-bg-color: #4f46e5; /* bg-indigo-600 */
+  --text-muted-color: #6b7280; /* text-gray-500 */
+}
+
+.theme-retro {
+  --background-color: #d2b48c; /* tan */
+  --text-color: #3a2e20; /* dark brown */
+  --board-bg-color: #a0522d; /* sienna */
+  --board-border-color: #8b4513; /* saddlebrown */
+  --cell-border-color: #cd853f; /* peru */
+  --button-bg-color: #8b4513; /* saddlebrown */
+  --button-hover-bg-color: #a0522d; /* sienna */
+  --text-muted-color: #3a2e20; /* dark brown */
+
+  /* Retro Tetromino Colors */
+  --color-i: #00ffff;
+  --color-o: #ffff00;
+  --color-t: #800080;
+  --color-s: #00ff00;
+  --color-z: #ff0000;
+  --color-j: #0000ff;
+  --color-l: #ff7f00;
+  --color-garbage: #808080;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--background-color);
+  --color-foreground: var(--text-color);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background-color: #0a0a0a;
+    --text-color: #ededed;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--background-color);
+  color: var(--text-color);
   font-family: Arial, Helvetica, sans-serif;
 }
